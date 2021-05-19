@@ -1,0 +1,67 @@
+{% include "header.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('{{post.img_url}}')">
+	<div class="overlay"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 col-md-10 mx-auto">
+				<div class="post-heading">
+					<h1>{{post.title}}</h1>
+					<h2 class="subheading">{{post.subtitle}}</h2>
+					<span class="meta">Posted by
+              <a href="#">{{post.author.name}}</a>
+              on {{post.date}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>
+            {{post.body | safe}}
+          </p>
+           <hr>
+            <!-- If the user is an admin they can see the edit post-->
+            {% if current_user.id == 1 %}
+           <div class="clearfix">
+          <a class="btn btn-primary float-right" href="{{url_for('edit_post', index=post.id)}}">Edit Post</a>
+        </div>
+            {% endif %}
+
+            <!--           Comments Area -->
+            {{ wtf.quick_form(form, button_map={'submit': 'primary'}, novalidate=True) }}
+          {{ ckeditor.load() }}
+          {{ ckeditor.config(name='comment') }}
+
+          <div class="col-lg-8 col-md-10 mx-auto comment">
+              {% for comment_obj in post.comments: %}
+              <ul class="commentList">
+                <li>
+
+                    <div class="commenterImage">
+                      <img src="{{ comment_obj.comment_author.email | gravatar }}"/>
+                    </div>
+                    <div class="commentText">
+                      <p>{{ comment_obj.text|safe }}</p>
+                      <span class="date sub-text">{{ comment_obj.comment_author.name }}</span>
+                    </div>
+
+                </li>
+              </ul>
+              {% endfor %}
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+{% include "footer.html" %}
